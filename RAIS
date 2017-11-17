@@ -1,0 +1,37 @@
+*Hello,
+*I need to extract RAIS data from Stata and follow these steps:
+
+*------
+*change diretory to the folder you want to download the data to
+cd "D:\dados\RAIS"
+
+*Create an R batch file (R equivalent to a do-file) containing: 
+* OBS: when seting the working directory bellow, function `setwd()` (equevalent to Stata's `cd` command), replace backslashes (\) with forwardslashes (/)
+
+file open rcode using  my_Rcode.R, write replace
+
+file write rcode                                           ///
+`""setwd("D:/dados/RAIS") #remember to change \ for / "' _newline ///
+`"install.packages('microdadosBrasil')                              "' _newline ///
+`"install.packages('haven')                                         "' _newline ///
+`"library(microdadosBrasil)                                        "' _newline ///
+`"library(haven)                                                    "' _newline ///
+`"                                                                  "' _newline ///
+`"download_sourceData ( " RAIS " , i  =  " 2000 " )                 "' _newline ///
+`"d<- read_RAIS(' vinculos ' , i = 2000 )                     "' _newline ///
+`"                                                                  "' _newline ///
+`"write_dta(d,file='RAIS_2000_vinculos.dta')                      "'
+file close rcode
+
+*Now run the avobe R code:
+shell "C:\Program Files\R\R-3.4.1\bin\R.exe" CMD BATCH my_Rcode.R
+
+*The above code should generate a .dta file. Now just read in the file:
+use RAIS_2000_vinculos.dta, clear
+*------
+*In this last command it presents an error in the Stata: 
+*file RAIS_2000_vinculos.dta not found 
+*r(601);
+
+*what is wrong? How do I get the data?
+*Thank you!
